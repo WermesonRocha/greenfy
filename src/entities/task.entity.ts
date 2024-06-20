@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from './user.entity';
 
 export enum TaskStatus {
   PENDING = 'PENDING',
@@ -18,4 +19,7 @@ export class Task {
 
   @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.PENDING })
   status: TaskStatus;
+
+  @ManyToOne(() => User, (user) => user.tasks, { eager: true })
+  user: User;
 }

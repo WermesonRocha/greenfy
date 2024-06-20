@@ -1,4 +1,4 @@
-import { IsOptional, IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 import { TaskStatus } from 'src/entities/task.entity';
 
 export class UpdateTaskDto {

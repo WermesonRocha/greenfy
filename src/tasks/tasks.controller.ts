@@ -6,48 +6,53 @@ import {
   Param,
   Post,
   Put,
-  Query,
+  Request,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
-import { Task, TaskStatus } from 'src/entities/task.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { TaskDto } from './dto/task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
+@UseGuards(JwtAuthGuard)
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  @ApiQuery({ name: 'status', required: false, type: String })
-  findAll(@Query('status') status?: TaskStatus): Promise<Task[]> {
-    return this.tasksService.findAll(status);
+  async findAll(@Request() req): Promise<TaskDto[]> {
+    return this.tasksService.findAll(req.user.id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<Task> {
-    return this.tasksService.findOne(id);
+  async findOne(@Param('id') id: number, @Request() req): Promise<TaskDto> {
+    return this.tasksService.findOne(id, req.user.id);
   }
 
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.tasksService.create(createTaskDto);
+  async create(
+    @Body() createTaskDto: CreateTaskDto,
+    @Request() req,
+  ): Promise<TaskDto> {
+    return this.tasksService.create(createTaskDto, req.user);
   }
 
   @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  update(
+  async update(
     @Param('id') id: number,
     @Body() updateTaskDto: UpdateTaskDto,
+    @Request() req,
   ): Promise<void> {
-    return this.tasksService.update(id, updateTaskDto);
+    return this.tasksService.update(id, updateTaskDto, req.user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
-    return this.tasksService.remove(id);
+  async remove(@Param('id') id: number, @Request() req): Promise<void> {
+    return this.tasksService.remove(id, req.user.id);
   }
 }
