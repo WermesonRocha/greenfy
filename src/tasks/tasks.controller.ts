@@ -1,26 +1,28 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
   Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { TasksService } from './tasks.service';
+import { ApiQuery } from '@nestjs/swagger';
+import { Task, TaskStatus } from 'src/entities/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { TaskStatus, Task } from 'src/entities/task.entity';
+import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  findAll(@Query('status') status: TaskStatus): Promise<Task[]> {
+  @ApiQuery({ name: 'status', required: false, type: String })
+  findAll(@Query('status') status?: TaskStatus): Promise<Task[]> {
     return this.tasksService.findAll(status);
   }
 
