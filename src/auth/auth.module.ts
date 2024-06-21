@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { MyRedisModule } from 'src/redis/redis.module';
+import { TenantService } from 'src/tenant/tenant.service';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -15,7 +16,6 @@ import { JwtStrategy } from './jwt.strategy';
   imports: [
     UsersModule,
     PassportModule,
-
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -26,8 +26,14 @@ import { JwtStrategy } from './jwt.strategy';
     }),
     MyRedisModule.forRoot(),
   ],
-  providers: [AuthService, JwtStrategy, BlacklistService, JwtAuthGuard],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    BlacklistService,
+    JwtAuthGuard,
+    TenantService,
+  ],
   controllers: [AuthController],
-  exports: [AuthService, BlacklistService],
+  exports: [AuthService, BlacklistService, JwtAuthGuard, JwtModule],
 })
 export class AuthModule {}

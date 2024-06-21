@@ -24,12 +24,12 @@ export class TasksController {
 
   @Get()
   async findAll(@Request() req): Promise<TaskDto[]> {
-    return this.tasksService.findAll(req.user.id);
+    return this.tasksService.findAll(req.tenantId, req.user.id);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number, @Request() req): Promise<TaskDto> {
-    return this.tasksService.findOne(id, req.user.id);
+    return this.tasksService.findOne(req.tenantId, id, 1);
   }
 
   @Post()
@@ -38,7 +38,7 @@ export class TasksController {
     @Body() createTaskDto: CreateTaskDto,
     @Request() req,
   ): Promise<TaskDto> {
-    return this.tasksService.create(createTaskDto, req.user);
+    return this.tasksService.create(req.tenantId, createTaskDto, req.user);
   }
 
   @Put(':id')
@@ -48,11 +48,16 @@ export class TasksController {
     @Body() updateTaskDto: UpdateTaskDto,
     @Request() req,
   ): Promise<void> {
-    return this.tasksService.update(id, updateTaskDto, req.user.id);
+    return this.tasksService.update(
+      req.tenantId,
+      id,
+      updateTaskDto,
+      req.user.id,
+    );
   }
 
   @Delete(':id')
   async remove(@Param('id') id: number, @Request() req): Promise<void> {
-    return this.tasksService.remove(id, req.user.id);
+    return this.tasksService.remove(req.tenantId, id, req.user.id);
   }
 }

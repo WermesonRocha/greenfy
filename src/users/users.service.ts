@@ -1,46 +1,54 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { plainToInstance } from 'class-transformer';
 import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
+import { RepositoryProxy } from 'src/proxy/repository.proxy';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @Inject('UserRepositoryProxy')
+    private readonly repositoryProxy: RepositoryProxy<User>,
   ) {}
 
-  async findAll(): Promise<UserDto[]> {
-    const users = await this.usersRepository.find();
+  async findAll(tenantId: string): Promise<UserDto[]> {
+    const users = await this.repositoryProxy.perform(tenantId, 'find');
     return users.map((user) => plainToInstance(UserDto, user));
   }
 
-  async findOne(id: number): Promise<UserDto> {
-    const user = await this.usersRepository.findOneBy({ id });
+  async findOne(tenantId: string, id: number): Promise<UserDto> {
+    const user = await this.repositoryProxy.perform(tenantId, 'findOneBy', {
+      id,
+    });
     if (!user) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
     return plainToInstance(UserDto, user);
   }
 
-  async findByEmail(email: string): Promise<User> {
-    return this.usersRepository.findOneBy({ email });
+  async findByEmail(tenantId: string, email: string): Promise<User> {
+    return this.repositoryProxy.perform(tenantId, 'findOneBy', { email });
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserDto> {
+  async create(
+    tenantId: string,
+    createUserDto: CreateUserDto,
+  ): Promise<UserDto> {
     const { password, ...userData } = createUserDto;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = this.usersRepository.create({
+    const newUser = await this.repositoryProxy.perform(tenantId, 'create', {
       ...userData,
       password: hashedPassword,
     });
-    const savedUser = await this.usersRepository.save(newUser);
+    const savedUser = await this.repositoryProxy.perform(
+      tenantId,
+      'save',
+      newUser,
+    );
     return plainToInstance(UserDto, savedUser);
   }
 }

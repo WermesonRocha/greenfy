@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Request,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -16,18 +17,21 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async findAll(): Promise<UserDto[]> {
-    return this.usersService.findAll();
+  async findAll(@Request() req): Promise<UserDto[]> {
+    return this.usersService.findAll(req.tenantId);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<UserDto> {
-    return this.usersService.findOne(id);
+  async findOne(@Param('id') id: number, @Request() req): Promise<UserDto> {
+    return this.usersService.findOne(req.tenantId, id);
   }
 
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
-    return this.usersService.create(createUserDto);
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @Request() req,
+  ): Promise<UserDto> {
+    return this.usersService.create(req.tenantId, createUserDto);
   }
 }

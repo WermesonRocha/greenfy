@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Post,
   Req,
+  Request,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -18,19 +19,23 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly blacklistService: BlacklistService, // Inject the BlacklistService
+    private readonly blacklistService: BlacklistService,
   ) {}
 
   @Post('login')
-  async login(@Body() loginDto: { email: string; password: string }) {
+  async login(
+    @Body() loginDto: { email: string; password: string },
+    @Request() req,
+  ) {
     const user = await this.authService.validateUser(
+      req.tenantId,
       loginDto.email,
       loginDto.password,
     );
     if (!user) {
       throw new UnauthorizedException();
     }
-    return this.authService.login(user);
+    return this.authService.login({ ...user, tenantId: req.tenantId });
   }
 
   @Post('logout')
