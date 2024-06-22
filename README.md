@@ -69,7 +69,8 @@ REDIS_PASSWORD=your_password
 ```
 
 4. **Configuração do Redis**:
-   Configure as variáveis de ambiente para o Redis:
+
+   Configure as variáveis de ambiente para o Redis
 
 ```makefile
 REDIS_HOST=localhost
@@ -91,4 +92,5 @@ $ npm run start:dev
 ```
 
 6. **Acesse a documentação do Swagger**:
+
    Abra seu navegador e vá para http://localhost:3000/api/docs para ver a documentação interativa da API.
