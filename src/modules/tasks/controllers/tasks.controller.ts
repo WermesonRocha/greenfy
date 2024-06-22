@@ -29,7 +29,7 @@ export class TasksController {
 
   @Get(':id')
   async findOne(@Param('id') id: number, @Request() req): Promise<TaskDto> {
-    return this.tasksService.findOne(req.tenantId, id, 1);
+    return this.tasksService.findOne(req.tenantId, id, req.user.id);
   }
 
   @Post()

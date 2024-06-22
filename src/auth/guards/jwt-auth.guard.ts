@@ -51,7 +51,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException('Invalid token or session expired');
     }
 
-    const userId = decodedToken.sub;
+    const userId = decodedToken.id;
     const userFromDb = await this.usersService.findOne(tenantId, userId);
     if (!userFromDb) {
       throw new UnauthorizedException('User not found');
