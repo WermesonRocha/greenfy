@@ -1,19 +1,21 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
+import * as path from 'path';
+import * as YAML from 'yamljs';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const swaggerDocument = YAML.load(
+    path.resolve(__dirname, '..', 'swagger.yaml'),
+  );
 
-  const config = new DocumentBuilder()
-    .setTitle('Greenfy - To-Do List API')
-    .setDescription('API for managing tasks')
-    .setVersion('1.0')
-    .addTag('tasks')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app, swaggerDocument, {
+    swaggerOptions: {
+      url: '/api/docs/swagger.yaml',
+    },
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
