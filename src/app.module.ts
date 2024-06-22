@@ -4,13 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { BlacklistService } from './auth/blacklist.service';
+import { BlacklistService } from './auth/blacklist/blacklist.service';
 import { TenantMiddleware } from './middlewares/tenant.middleware';
+import { TasksModule } from './modules/tasks/tasks.module';
+import { UsersModule } from './modules/users/users.module';
 import { ProxyModule } from './proxy/proxy.module';
-import { MyRedisModule } from './redis/redis.module';
-import { TasksModule } from './tasks/tasks.module';
+import { RedisModule } from './configs/redis/redis.module';
 import { TenantService } from './tenant/tenant.service';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { UsersModule } from './users/users.module';
     TasksModule,
     UsersModule,
     AuthModule,
-    MyRedisModule.forRoot(),
+    RedisModule.forRoot(),
     ProxyModule,
   ],
   controllers: [AppController],

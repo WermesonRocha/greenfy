@@ -7,8 +7,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
-import { UsersService } from 'src/users/users.service';
-import { BlacklistService } from './blacklist.service';
+import { UsersService } from 'src/modules/users/services/users.service';
+import { BlacklistService } from '../blacklist/blacklist.service';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {

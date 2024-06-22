@@ -3,7 +3,7 @@ import Redis, { Redis as RedisClient } from 'ioredis';
 
 @Global()
 @Module({})
-export class MyRedisModule {
+export class RedisModule {
   static forRoot(): DynamicModule {
     const redisProvider = {
       provide: 'REDIS_CLIENT',
@@ -24,7 +24,7 @@ export class MyRedisModule {
     };
 
     return {
-      module: MyRedisModule,
+      module: RedisModule,
       providers: [redisProvider],
       exports: [redisProvider],
     };

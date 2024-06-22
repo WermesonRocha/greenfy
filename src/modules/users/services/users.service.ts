@@ -3,8 +3,8 @@ import * as bcrypt from 'bcryptjs';
 import { plainToInstance } from 'class-transformer';
 import { User } from 'src/entities/user.entity';
 import { RepositoryProxy } from 'src/proxy/repository.proxy';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserDto } from './dto/user.dto';
+import { CreateUserDto } from '../dtos/create-user.dto';
+import { UserDto } from '../dtos/user.dto';
 
 @Injectable()
 export class UsersService {

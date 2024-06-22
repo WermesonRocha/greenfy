@@ -11,11 +11,11 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { TaskDto } from './dto/task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
-import { TasksService } from './tasks.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CreateTaskDto } from '../dtos/create-task.dto';
+import { TaskDto } from '../dtos/task.dto';
+import { UpdateTaskDto } from '../dtos/update-task.dto';
+import { TasksService } from '../services/tasks.service';
 
 @Controller('tasks')
 @UseGuards(JwtAuthGuard)
