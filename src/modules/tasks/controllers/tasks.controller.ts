@@ -24,7 +24,8 @@ export class TasksController {
 
   @Get()
   async findAll(@Request() req): Promise<TaskDto[]> {
-    return this.tasksService.findAll(req.tenantId, req.user.id);
+    const { status } = req.query;
+    return this.tasksService.findAll(req.tenantId, req.user.id, status);
   }
 
   @Get(':id')

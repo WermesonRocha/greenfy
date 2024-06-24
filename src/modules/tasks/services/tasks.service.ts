@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { Task } from 'src/entities/task.entity';
+import { Task, TaskStatus } from 'src/entities/task.entity';
 import { RepositoryProxy } from 'src/proxy/repository.proxy';
 import { CreateTaskDto } from '../dtos/create-task.dto';
 import { TaskDto } from '../dtos/task.dto';
@@ -13,9 +13,15 @@ export class TasksService {
     private readonly repositoryProxy: RepositoryProxy<Task>,
   ) {}
 
-  async findAll(tenantId: string, userId: number): Promise<TaskDto[]> {
+  async findAll(
+    tenantId: string,
+    userId: number,
+    status?: TaskStatus,
+  ): Promise<TaskDto[]> {
+    const queryFilter = { user: { id: userId } };
+    if (!!status) queryFilter['status'] = status;
     const tasks = await this.repositoryProxy.perform(tenantId, 'find', {
-      where: { user: { id: userId } },
+      where: queryFilter,
       relations: ['user'],
     });
     return tasks.map((task) => plainToInstance(TaskDto, task));
